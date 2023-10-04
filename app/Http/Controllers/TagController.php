@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class TagController extends Controller
 {
@@ -12,23 +13,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        $tags = Tag::all();
+        return response()->json($tags);
     }
 
     /**
@@ -36,23 +22,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tag $tag)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Tag $tag)
-    {
-        //
+        return response()->json($tag);
     }
 
     /**
@@ -60,6 +30,12 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+
+        return response()->json([
+            'message' => 'Tag deleted successfully'
+        ]);
     }
+
 }
+
