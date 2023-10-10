@@ -10,6 +10,6 @@ class TagType extends Model
     use HasFactory;
 
     public function tags(){
-        $this->hasMany(Tag::class);
+        return $this->hasMany(Tag::class);
     }
 }

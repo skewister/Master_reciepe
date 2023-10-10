@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\TagType;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class RecipeController extends Controller
 {
@@ -25,7 +26,7 @@ class RecipeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+         $request->validate([
             'title' => 'required|unique:recipes',
             'description' => 'required|string|max:1000',
             'time_to_cook_tag_id' => 'required|exists:tags,id',
@@ -35,7 +36,7 @@ class RecipeController extends Controller
             'type_plat_id' => 'exists:tags,id',
             'type_cuisine_id' => 'exists:tags,id',
             'nutriment_id' => 'exists:tags,id',
-            'Methode_cuisson_id' => 'exists:tags,id',
+            'methode_cuisson_id' => 'exists:tags,id',
             'image' => 'required|unique:recipes',
             'video' => 'unique:recipes',
         ]);
@@ -55,7 +56,8 @@ class RecipeController extends Controller
 
         foreach ($tagAssociations as $requestKey => $tagTypeId) {
             if ($request->has($requestKey)) {
-                $tag = TagType::where('id', $tagTypeId)->tags()->where('id', $request->$requestKey)->first();
+                Log::debug($tagTypeId);
+                $tag = TagType::where('id', $tagTypeId)->first()->tags()->where('id', $request->$requestKey)->first();
                 if (!$tag) {
                     return response()->json([
                         'message' => "l'ID renseigné n'est pas de la bonne catégorie"
@@ -65,7 +67,10 @@ class RecipeController extends Controller
             }
         }
 
+        $request->user_id = auth()->user()->id;
+
         $recipe = Recipe::create($request->all());
+
         $recipe->tags()->attach($allTags);
 
         return response()->json([
