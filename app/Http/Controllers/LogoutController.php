@@ -9,13 +9,10 @@ class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        // Si l'utilisateur est authentifié avec Sanctum...
         if (auth()->user()) {
-            // Révoquer le token courant...
-            $request->user()->currentAccessToken()->delete();
+            auth()->user()->currentAccessToken()->revoke();
         }
 
-        // Si l'utilisateur est authentifié via session...
         if (Auth::check()) {
             Auth::logout();
         }

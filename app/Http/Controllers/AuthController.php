@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
-
         $customMessages = [
             'name.required' => 'Le champ nom est obligatoire.',
             'email.required' => 'Le champ email est obligatoire.',
@@ -34,10 +32,8 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Générer un token
         $token = $user->createToken('app-token')->plainTextToken;
 
         return response(['token' => $token], 201);
     }
-
 }

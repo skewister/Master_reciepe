@@ -34,6 +34,7 @@ class Recipe extends Model
         return $this->hasMany(Step::class);
     }
 
+
     public function comments()
     {
         return $this->hasMany(Comment::class);

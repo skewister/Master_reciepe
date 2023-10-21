@@ -40,6 +40,10 @@ Route::prefix('/recipes')->group(function () {
     Route::get('/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
     Route::put('/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
+    Route::post('/{recipe}/steps', [RecipeController::class, 'addStep']);
+    Route::get('/{recipe}/steps', [RecipeController::class, 'listSteps']);
+    Route::put('/{recipe}/steps/{step}', [RecipeController::class, 'updateStep']);
+    Route::delete('/{recipe}/steps/{step}', [RecipeController::class, 'deleteStep']);
 });
 
 Route::middleware(['auth'])->group(function () {

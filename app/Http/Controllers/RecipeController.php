@@ -8,6 +8,7 @@ use App\Models\TagType;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Models\Step;
 
 class RecipeController extends Controller
 {
@@ -24,9 +25,10 @@ class RecipeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'title' => 'required|unique:recipes',
             'description' => 'required|string|max:1000',
             'time_to_cook_tag_id' => 'required|exists:tags,id',
@@ -41,8 +43,16 @@ class RecipeController extends Controller
             'video' => 'unique:recipes',
         ]);
 
-        $allTags = [];
+        $recipe = Recipe::create($request->all());
 
+        if ($request->has('steps')) {
+            foreach ($request->steps as $stepData) {
+                $step = new Step($stepData);
+                $recipe->steps()->save($step);
+            }
+        }
+
+        $allTags = [];
         $tagAssociations = [
             'nutriment_id' => 8,
             'Methode_cuisson_id' => 8,
@@ -56,7 +66,6 @@ class RecipeController extends Controller
 
         foreach ($tagAssociations as $requestKey => $tagTypeId) {
             if ($request->has($requestKey)) {
-                Log::debug($tagTypeId);
                 $tag = TagType::where('id', $tagTypeId)->first()->tags()->where('id', $request->$requestKey)->first();
                 if (!$tag) {
                     return response()->json([
@@ -67,10 +76,6 @@ class RecipeController extends Controller
             }
         }
 
-        $request->user_id = auth()->user()->id;
-
-        $recipe = Recipe::create($request->all());
-
         $recipe->tags()->attach($allTags);
 
         return response()->json([
@@ -78,6 +83,7 @@ class RecipeController extends Controller
             'data' => $recipe
         ], 201);
     }
+
 
 
 
@@ -105,6 +111,64 @@ class RecipeController extends Controller
             'data' => $recipe
         ]);
     }
+
+
+    /**
+     * add step to recipe.
+     */
+    public function addStep(Request $request, Recipe $recipe)
+    {
+        $request->validate([
+            'description' => 'required|string|max:1000',
+            'step_number' => 'required|integer',
+        ]);
+
+        $step = new Step([
+            'description' => $request->description,
+            'step_number' => $request->step_number,
+        ]);
+
+        $recipe->steps()->save($step);
+
+        return response()->json([
+            'message' => 'Step added successfully.',
+            'data' => $step
+        ], 201);
+    }
+
+
+    public function listSteps(Recipe $recipe)
+    {
+        return response()->json($recipe->steps);
+    }
+
+
+    public function updateStep(Request $request, Recipe $recipe, Step $step)
+    {
+        $request->validate([
+            'description' => 'sometimes|required|string|max:1000',
+            'step_number' => 'sometimes|required|integer',
+        ]);
+
+        $step->update($request->all());
+
+        return response()->json([
+            'message' => 'Step updated successfully',
+            'data' => $step
+        ]);
+    }
+
+
+    public function deleteStep(Recipe $recipe, Step $step)
+    {
+        $step->delete();
+
+        return response()->json([
+            'message' => 'Step deleted successfully'
+        ]);
+    }
+
+
 
     /**
      * Remove the specified resource from storage.

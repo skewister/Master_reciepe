@@ -16,7 +16,11 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+            return redirect('/login')->withErrors(['error' => 'Une erreur est survenue lors de la tentative de connexion avec Google. Veuillez réessayer.']);
+        }
 
         $user = User::updateOrCreate(
             ['email' => $googleUser->getEmail()],
@@ -25,7 +29,8 @@ class GoogleController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard');
+        $token = $user->createToken('app-token')->plainTextToken;
+
+        return response(['token' => $token], 200);
     }
 }
-
