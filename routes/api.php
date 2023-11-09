@@ -46,12 +46,13 @@ Route::prefix('/recipes')->group(function () {
     Route::delete('/{recipe}/steps/{step}', [RecipeController::class, 'deleteStep']);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 });
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
-Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 
