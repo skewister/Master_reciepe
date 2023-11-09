@@ -19,11 +19,10 @@ class AuthController extends Controller
             'password.min' => 'Le mot de passe doit contenir au moins :min caractères.',
             'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
         ];
-
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:8',
         ], $customMessages);
 
         $user = User::create([
