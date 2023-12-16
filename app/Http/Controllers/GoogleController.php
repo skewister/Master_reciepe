@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class GoogleController extends Controller
 {
+
+
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
@@ -16,10 +18,11 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
+
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
         } catch (\Exception $e) {
-            return redirect('/login')->withErrors(['error' => 'Une erreur est survenue lors de la tentative de connexion avec Google. Veuillez réessayer.']);
+            return redirect('/')->withErrors(['error' => 'Une erreur est survenue lors de la tentative de connexion avec Google. Veuillez réessayer.']);
         }
 
         $user = User::updateOrCreate(
@@ -31,6 +34,6 @@ class GoogleController extends Controller
 
         $token = $user->createToken('app-token')->plainTextToken;
 
-        return response(['token' => $token], 200);
+        return redirect(env('FRONTEND_URL') . "/login/success?token=$token");
     }
 }

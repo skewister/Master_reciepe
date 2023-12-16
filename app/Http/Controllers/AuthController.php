@@ -31,6 +31,8 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
+        Auth::login($user);
+
         $token = $user->createToken('app-token')->plainTextToken;
 
         return response(['token' => $token], 201);
