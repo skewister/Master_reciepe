@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Models\TagType;
 
 class TagController extends Controller
 {
@@ -36,6 +37,21 @@ class TagController extends Controller
             'message' => 'Tag deleted successfully'
         ]);
     }
+
+    /**
+     * search tag type and verification if he's not null.
+     */
+    public function getTagsByType($type)
+    {
+        $tagType = TagType::where('type', $type)->first();
+        if (!$tagType) {
+            return response()->json(['message' => 'Type de tag introuvable'], 404);
+        }
+
+        $tags = $tagType->tags;
+        return response()->json($tags);
+    }
+
 
 }
 

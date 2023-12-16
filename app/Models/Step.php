@@ -13,6 +13,7 @@ class Step extends Model
         'recipe_id',
         'description',
         'step_number',
+        'video',
     ];
 
     public function recipe()

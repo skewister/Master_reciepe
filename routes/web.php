@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthentificationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,8 +20,8 @@ Route::get('/', function () {
 
 use App\Http\Controllers\GoogleController;
 
-Route::get('/login/google', [GoogleController::class, 'redirectToGoogle'])->name('login');
-Route::get('/login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('/login/google', [\App\Http\Controllers\AuthentificationController::class, 'redirectToGoogle'])->name('login');
+Route::get('/login/google/callback', [AuthentificationController::class, 'handleGoogleCallback']);
 
 
 
