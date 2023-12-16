@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->text('title');
             $table->text('description');
+            $table->text('difficulty');
             $table->string('prep_time');
             $table->string('cook_time');
             $table->string('image');
