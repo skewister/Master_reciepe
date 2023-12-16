@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ingredient extends Model
+class Ingredient extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
+        'id',
         'name',
-        'quantity',
-        'unit',
+        'picture',
     ];
 
     public function recipes()
