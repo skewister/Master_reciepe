@@ -44,6 +44,7 @@ Route::prefix('tags')->group(function () {
     Route::get('/', [TagController::class, 'index'])->name('tags.index');
     Route::get('/{tag}', [TagController::class, 'show'])->name('tags.show');
     Route::delete('/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+    Route::get('/type', [TagController::class, 'getTypesTags'])->name('tags.Types');
     Route::get('/type/{type}', [TagController::class, 'getTagsByType'])->name('tags.byType');
 });
 
