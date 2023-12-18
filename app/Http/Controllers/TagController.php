@@ -41,9 +41,9 @@ class TagController extends Controller
     /**
      * search tag type and verification if he's not null.
      */
-    public function getTagsByType($type)
+    public function getTagsByType($typeId)
     {
-        $tagType = TagType::where('type', $type)->first();
+        $tagType = TagType::find($typeId);
         if (!$tagType) {
             return response()->json(['message' => 'Type de tag introuvable'], 404);
         }
@@ -51,6 +51,7 @@ class TagController extends Controller
         $tags = $tagType->tags;
         return response()->json($tags);
     }
+
 
 
 }
