@@ -29,7 +29,7 @@ class RecipeController extends Controller
             'description' => 'required|string|max:1000',
             'prep_time' => 'required|exists:tags,id',
             'cook_time' => 'required|exists:tags,id',
-            'tags' => 'required|array',
+            'tags' => 'array',
             'tags.*' => 'exists:tags,id',
             'difficulty' => 'required|exists:tags,id',
         ]);
