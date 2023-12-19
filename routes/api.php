@@ -32,7 +32,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{recipe}/steps', [RecipeController::class, 'listSteps']);
         Route::PATCH('/{recipe}/steps/{step}', [RecipeController::class, 'updateStep']);
         Route::delete('/{recipe}/steps/{step}', [RecipeController::class, 'deleteStep']);
-        Route::get('/search', [RecipeController::class, 'search'])->name('recipes.search');
+
+        Route::post('/recipes/{recipe}/ingredients', [IngredientController::class, 'addToRecipe']);
 
     });
 
@@ -44,9 +45,10 @@ Route::prefix('tags')->group(function () {
     Route::get('/', [TagController::class, 'index'])->name('tags.index');
     Route::get('/{tag}', [TagController::class, 'show'])->name('tags.show');
     Route::delete('/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
-    Route::get('/type', [TagController::class, 'getTypesTags'])->name('tags.Types');
+    Route::get('/type', [TagController::class, 'showTagType'])->name('tags.Types');
     Route::get('/type/{type}', [TagController::class, 'getTagsByType'])->name('tags.byType');
 });
+Route::get('/recipes/ingredients/search', [IngredientController::class, 'search']);
 
 Route::post('/login', [AuthentificationController::class, 'login'])->name('login');
 Route::post('/register', [AuthentificationController::class, 'register'])->name('register');
