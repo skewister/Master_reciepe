@@ -52,6 +52,12 @@ class TagController extends Controller
         return response()->json($tags);
     }
 
+    public function showTagType()
+    {
+        $tagType = TagType::all();
+        return response()->json($tagType);
+    }
+
 
 
 }
