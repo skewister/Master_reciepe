@@ -1,0 +1,8 @@
+models:
+    Comment: { user_id: 'biginteger unsigned', recipe_id: 'biginteger unsigned', content: text }
+    Ingredient: { name: string, picture: string }
+    Recipe: { user_id: 'biginteger unsigned', title: text, description: text, difficulty: 'text nullable', prep_time: 'string nullable', cook_time: 'string nullable', image: 'string nullable', video: 'string nullable' }
+    Step: { recipe_id: 'biginteger unsigned', description: text, step_number: integer, video: 'string nullable' }
+    Tag: { name: string, tag_type_id: 'biginteger unsigned' }
+    TagType: { type: string }
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, specialty: 'string nullable', bio: 'string nullable', dietary_preferences: 'string nullable', profile_picture: 'string nullable', remember_token: 'string:100 nullable' }

@@ -8,16 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Ingredient extends Model
 {
     use HasFactory;
-    public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'id',
         'name',
         'picture',
     ];
 
-    public function recipes()
-    {
-        return $this->belongsToMany(Recipe::class, 'recipe_ingredients');
-    }
-
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'integer',
+    ];
 }
