@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id');
             $table->text('title');
             $table->text('description');
-            $table->text('difficulty');
-            $table->string('prep_time');
-            $table->string('cook_time');
-            $table->string('image');
+            $table->text('difficulty')->nullable();
+            $table->string('prep_time')->nullable();
+            $table->string('cook_time')->nullable();
+            $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->timestamps();
         });

@@ -9,11 +9,17 @@ class Tag extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'name',
+        'tag_type_id',
     ];
 
-    public function recipes()
+    public function recipe()
     {
         return $this->belongsToMany(Recipe::class, 'recipe_tags');
     }

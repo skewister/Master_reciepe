@@ -9,11 +9,16 @@ class Recipe extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'user_id',
         'title',
-        'difficulty',
         'description',
+        'difficulty',
         'prep_time',
         'cook_time',
         'image',

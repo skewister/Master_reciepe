@@ -1,0 +1,30 @@
+created:
+    - database/factories/CommentFactory.php
+    - database/factories/IngredientFactory.php
+    - database/factories/RecipeFactory.php
+    - database/factories/StepFactory.php
+    - database/factories/TagFactory.php
+    - database/factories/TagTypeFactory.php
+    - database/factories/UserFactory.php
+    - database/migrations/2023_12_20_175832_create_comments_table.php
+    - database/migrations/2023_12_20_175833_create_ingredients_table.php
+    - database/migrations/2023_12_20_175834_create_recipes_table.php
+    - database/migrations/2023_12_20_175835_create_steps_table.php
+    - database/migrations/2023_12_20_175836_create_tags_table.php
+    - database/migrations/2023_12_20_175837_create_tag_types_table.php
+    - database/migrations/2023_12_20_175838_create_users_table.php
+    - app/Models/Comment.php
+    - app/Models/Ingredient.php
+    - app/Models/Recipe.php
+    - app/Models/Step.php
+    - app/Models/Tag.php
+    - app/Models/TagType.php
+    - app/Models/User.php
+models:
+    Comment: { user_id: 'biginteger unsigned', recipe_id: 'biginteger unsigned', content: text }
+    Ingredient: { name: string, picture: string }
+    Recipe: { user_id: 'biginteger unsigned', title: text, description: text, difficulty: 'text nullable', prep_time: 'string nullable', cook_time: 'string nullable', image: 'string nullable', video: 'string nullable' }
+    Step: { recipe_id: 'biginteger unsigned', description: text, step_number: integer, video: 'string nullable' }
+    Tag: { name: string, tag_type_id: 'biginteger unsigned' }
+    TagType: { type: string }
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, specialty: 'string nullable', bio: 'string nullable', dietary_preferences: 'string nullable', profile_picture: 'string nullable', remember_token: 'string:100 nullable' }

@@ -29,7 +29,7 @@ class RecipeController extends Controller
             'description' => 'required|string|max:1000',
             'prep_time' => 'required|exists:tags,id',
             'cook_time' => 'required|exists:tags,id',
-            'tags' => 'required|array',
+            'tags' => 'array',
             'tags.*' => 'exists:tags,id',
             'difficulty' => 'required|exists:tags,id',
         ]);
@@ -158,33 +158,39 @@ class RecipeController extends Controller
     /**
      * add step to recipe.
      */
-public function addStep(Request $request, Recipe $recipe)
-{
-    $request->validate([
-        'description' => 'required|string|max:1000',
-        'step_number' => 'required|integer',
-        'video' => 'nullable|file', // Validation pour le fichier vidéo
-    ]);
+    public function addStep(Request $request, Recipe $recipe)
+    {
+        // Validation des données de la requête
+        $request->validate([
+            'description' => 'required|string|max:1000',
+            'step_number' => 'required|integer',
+            'video' => 'nullable|file|mimes:mp4,avi,mov', // Validez les types de fichiers vidéo
+        ]);
 
-    $videoPath = null;
-    if ($request->hasFile('video')) {
-        $videoPath = $request->file('video')->store('steps_videos', 'public');
+        // Gestion du stockage de la vidéo
+        $videoPath = null;
+        if ($request->hasFile('video')) {
+            $videoPath = $request->file('video')->store('steps_videos', 'public');
+        }
+
+
+        // Créer la nouvelle étape avec le chemin de la vidéo
+        $step = new Step([
+            'recipe_id' => $recipe->id,
+            'description' => $request->description,
+            'step_number' => $request->step_number,
+            'video' => $videoPath,
+        ]);
+
+        $recipe->steps()->save($step);
+
+        return response()->json([
+            'message' => 'Step added successfully.',
+            'data' => $step
+        ], 201);
     }
 
-    $step = new Step([
-        'recipe_id' => $recipe->id,
-        'description' => $request->description,
-        'step_number' => $request->step_number,
-        'video' => $videoPath,
-    ]);
 
-    $recipe->steps()->save($step);
-
-    return response()->json([
-        'message' => 'Step added successfully.',
-        'data' => $step
-    ], 201);
-}
 
 
     public function listSteps(Recipe $recipe)

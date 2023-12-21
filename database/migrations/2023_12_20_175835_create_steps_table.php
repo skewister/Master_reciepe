@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tags', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\TagType::class)->constrained()->cascadeOnDelete();
+        Schema::create('steps', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('recipe_id');
+            $table->text('description');
+            $table->integer('step_number');
+            $table->string('video')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tags', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('steps');
     }
 };

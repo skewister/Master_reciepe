@@ -9,6 +9,11 @@ class Step extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'recipe_id',
         'description',
