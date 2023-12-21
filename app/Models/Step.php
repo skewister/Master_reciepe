@@ -21,6 +21,11 @@ class Step extends Model
         'video',
     ];
 
+    public function recipe()
+    {
+        return $this->belongsTo(Recipe::class);
+    }
+
     /**
      * The attributes that should be cast to native types.
      *

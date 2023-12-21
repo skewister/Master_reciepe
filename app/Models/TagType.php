@@ -18,6 +18,10 @@ class TagType extends Model
         'type',
     ];
 
+    public function tags(){
+        return $this->hasMany(Tag::class);
+    }
+
     /**
      * The attributes that should be cast to native types.
      *
