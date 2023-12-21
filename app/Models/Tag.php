@@ -18,4 +18,13 @@ class Tag extends Model
         return $this->belongsToMany(Recipe::class, 'recipe_tags');
     }
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'integer',
+        'tag_type_id' => 'integer',
+    ];
 }

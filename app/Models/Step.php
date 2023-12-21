@@ -21,4 +21,13 @@ class Step extends Model
         return $this->belongsTo(Recipe::class);
     }
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'integer',
+        'recipe_id' => 'integer',
+    ];
 }
