@@ -20,11 +20,21 @@ class Comment extends Model
         'content',
     ];
 
+    public function recipe()
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function recipe(){
+        return $this->belongsTo(Recipe::class);
+    }
+
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',

@@ -25,6 +25,32 @@ class Recipe extends Model
         'video',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function Ingredient()
+    {
+        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
+    }
+
+    public function steps()
+    {
+        return $this->hasMany(Step::class);
+    }
+
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'recipe_tags');
+    }
+
     /**
      * The attributes that should be cast to native types.
      *

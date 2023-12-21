@@ -35,13 +35,34 @@ class User extends Model
         'remember_token',
     ];
 
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function likes()
+    {
+        return $this->belongsToMany(Recipe::class, 'likes');
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Recipe::class, 'favorites');
+    }
+
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
-        'id' => 'integer',
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
 }
