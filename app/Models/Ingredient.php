@@ -8,13 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Ingredient extends Model
 {
     use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    public $timestamps = false;
     protected $fillable = [
+        'id',
         'name',
         'picture',
     ];

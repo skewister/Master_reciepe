@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
