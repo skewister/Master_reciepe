@@ -35,7 +35,7 @@ class User extends Model
         'remember_token',
     ];
 
-    public function recipes()
+    public function recipe()
     {
         return $this->hasMany(Recipe::class);
     }

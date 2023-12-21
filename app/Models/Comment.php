@@ -20,7 +20,6 @@ class Comment extends Model
         'content',
     ];
 
-    public function recipe()
     /**
      * The attributes that should be cast to native types.
      *
