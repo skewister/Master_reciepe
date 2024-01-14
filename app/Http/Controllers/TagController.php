@@ -27,7 +27,7 @@ class TagController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage. v
      */
     public function destroy(Tag $tag)
     {

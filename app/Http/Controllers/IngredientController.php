@@ -7,6 +7,18 @@ use Illuminate\Http\Request;
 
 class IngredientController extends Controller
 {
+
+    public function index()
+    {
+        try {
+            $ingredients = Ingredient::all();
+            return response()->json($ingredients);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Une erreur serveur est survenue'], 500);
+        }
+    }
+
     public function search(Request $request)
     {
         try {

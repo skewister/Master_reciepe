@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateRequest;
 use App\Models\Recipe;
 use App\Models\Step;
+use App\Models\Tag;
+use App\Models\TagType;
 use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class RecipeController extends Controller
 {
@@ -13,9 +18,19 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::all();
-        return response()->json($recipes);
+        $recipes = Recipe::with('tags.tagType')->get();
+
+        $recipes->each(function($recipe){
+            if($recipe->image && $recipe->image !==""|| $recipe->image !==('(Null)')){
+                $recipe->image_url= asset(Storage::url($recipe->image));
+            }
+        });
+        return response()->json([
+            'message' => 'Recettes récupérées avec succès',
+            'data' => $recipes
+        ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -32,27 +47,81 @@ class RecipeController extends Controller
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
             'difficulty' => 'required|exists:tags,id',
+            'ingredients' => 'required|array',
+            'ingredients.*.ingredientId' => 'required|exists:ingredients,id',
+            'ingredients.*.quantity' => 'required',
+            'ingredients.*.unit' => 'required',
+            'image'=> 'nullable|image|mimes:jpeg,png,jpg'
         ]);
 
-        // Création de la recette
-        $recipeData = $request->only(['title', 'description', 'image', 'video']);
-        $recipeData['user_id'] = auth()->id();
-        $recipe = Recipe::create($recipeData);
+        //Gestion image
 
-        // Association des tags
-        $recipe->tags()->attach($request->input('tags'));
-        $recipe->tags()->attach($request->input('prep_time'));
-        $recipe->tags()->attach($request->input('cook_time'));
-        $recipe->tags()->attach($request->input('difficulty'));
+        try{
+            $imagePath = null;
+            if($request -> hasFile('image')){
+                if($request->file('image')->isValid()){
+                    $imageName = $request->file('image')->getClientOriginalName();
+                    $imagePath = $request->file('image')->storeAs('recipe_image',$imageName,'public',);
+                }else{
+                    throw new \Exception('Fichier image invalide');
+                }
 
-        // Réponse en cas de succès
-        return response()->json([
-            'message' => 'Recipe created successfully.',
-            'data' => $recipe
-        ], 201);
+            }
+            // Création de la recette
+            $recipeData = $request->only(['title', 'description', 'image', 'video']);
+            $recipeData['user_id'] = auth()->id();
+            $recipeData['image'] = $imagePath;
+            $recipe = Recipe::create($recipeData);
+
+            // Association des tags
+            $recipe->tags()->attach($request->input('tags'));
+            $recipe->tags()->attach($request->input('prep_time'));
+            $recipe->tags()->attach($request->input('cook_time'));
+            $recipe->tags()->attach($request->input('difficulty'));
+
+            // Traitement des ingrédients
+            foreach ($request->input('ingredients') as $ingredient) {
+                $recipe->ingredients()->attach($ingredient['ingredientId'], [
+                    'quantity' => $ingredient['quantity'],
+                    'unit' => $ingredient['unit']
+                ]);
+            }
+
+            // Réponse en cas de succès
+            return response()->json([
+                'message' => 'Recette parfaitement créé.',
+                'data' => $recipe->load('ingredients') // Charger les ingrédients avec la recette
+            ], 201);
+        }catch (Exception $e){
+            return response($e);
+        }
+
+
+
     }
 
 
+
+    public function getStepsByRecipe(Recipe $recipe)
+    {
+        // Assuming Recipe has many Steps
+        return response()->json($recipe->steps);
+    }
+
+
+    public function getIngredientsByRecipe($recipeId)
+    {
+
+        $recipe = Recipe::with('ingredients')->findOrFail($recipeId);
+        return response()->json($recipe->ingredients);
+    }
+
+
+    public function getTagsByRecipe($recipeId)
+    {
+        $recipe = Recipe::with(['tags.tagType'])->findOrFail($recipeId);
+        return response()->json($recipe->tags);
+    }
 
 
     /**
@@ -78,49 +147,53 @@ class RecipeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Recipe $recipe)
+    public function update(UpdateRequest $request, Recipe $recipe)
     {
         // Valider la requête
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required|string|max:1000',
-            'prep_time' => 'required|exists:tags,id',
-            'cook_time' => 'required|exists:tags,id',
-            'tags' => 'required|array',
-            'tags.*' => 'exists:tags,id',
-            'difficulty' => 'required|exists:tags,id',
-        ]);
+        try{
 
-        // Mettre à jour les données de la recette
-        $recipeData = $request->only(['title', 'description', 'image', 'video']);
-        $recipe->update($recipeData);
+            $recipe->title=$request->title;
+            $recipe->description = $request->description;
 
+            // Vérifie si l'utilisateur qui est lié à la recette est le même que celui qui veut faire l'edition
+            if($recipe->user_id == auth()->user()->id) {
 
-        // Mettre à jour les tags si le tableau de tags est fourni
-        if ($request->has('tags')) {
-            // Mettre à jour les tags associés à la recette
-            $recipe->tags()->sync($request->tags);
+                //Verifie si on ajoute/modifie des ingrédients
+                $isset = $request->input(("ingredients"));
+
+                if(isset($isset)){
+                    $recipe->ingredients()->detach();
+                    // Ajouter les nouveaux ingrédients
+
+                    foreach ($request->input('ingredients') as $ingredient) {
+                        $recipe->ingredients()->attach($ingredient['ingredientId'], [
+                            'quantity' => $ingredient['quantity'],
+                            'unit' => $ingredient['unit']
+                        ]);
+                    }
+                }
+                $issetTag= $request-> input(("tags"));
+                if(isset($issetTag)){
+                    $recipe->tags()->detach();
+                    $recipe->tags()->attach($request->input('tags'));
+                    $recipe->tags()->attach($request->input('prep_time'));
+                    $recipe->tags()->attach($request->input('cook_time'));
+                    $recipe->tags()->attach($request->input('difficulty'));
+                }
+
+                    $recipe->save();
+                    // Réponse en cas de succès
+                    return response()->json([
+                        'message' => 'Recipe updated successfully.',
+                        'data' => $recipe->load('ingredients', 'tags') // Charger les ingrédients et les tags avec la recette
+                    ]);
+
+            }
+            }catch(Exception $e){
+            return response()->json($e);
         }
 
-        // Associer les tags de 'prep_time' et 'cook_time' s'ils sont fournis
-        if ($request->has('prep_time')) {
-            $recipe->tags()->syncWithoutDetaching($request->input('prep_time'));
-        }
-        if ($request->has('cook_time')) {
-            $recipe->tags()->syncWithoutDetaching($request->input('cook_time'));
-        }
-        if ($request->has('difficulty')) {
-            $recipe->tags()->syncWithoutDetaching($request->input('difficulty'));
-        }
-
-        // Réponse en cas de succès
-        return response()->json([
-            'message' => 'Recipe updated successfully.',
-            'data' => $recipe
-        ]);
     }
-
-
 
     /**
      * Search in fonction of title and tag and ingredients.
@@ -204,15 +277,31 @@ class RecipeController extends Controller
         $request->validate([
             'description' => 'sometimes|required|string|max:1000',
             'step_number' => 'sometimes|required|integer',
+            'video' => 'nullable|file|mimes:mp4,avi,mov', // Validez les types de fichiers vidéo
         ]);
 
-        $step->update($request->all());
+        // Gérer la mise à jour ou la suppression de la vidéo
+        if ($request->hasFile('video')) {
+            // Si une nouvelle vidéo est fournie, stockez-la et mettez à jour le chemin
+            $videoPath = $request->file('video')->store('steps_videos', 'public');
+            $step->video = $videoPath;
+        } elseif ($request->input('remove_video') === true) {
+            // Si la requête indique de supprimer la vidéo, faites-le
+            Storage::delete($step->video);
+            $step->video = null;
+        }
+
+        // Mettre à jour les autres attributs de l'étape
+        $step->description = $request->input('description');
+        $step->step_number = $request->input('step_number');
+        $step->save();
 
         return response()->json([
             'message' => 'Step updated successfully',
             'data' => $step
         ]);
     }
+
 
 
     public function deleteStep(Recipe $recipe, Step $step)
