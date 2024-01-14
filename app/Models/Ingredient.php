@@ -15,9 +15,13 @@ class Ingredient extends Model
         'picture',
     ];
 
-    public function recipe(){
-        return $this->belongsToMany(Recipe::class, 'recipe_ingredients');
+    public function recipes()
+    {
+        return $this
+            ->belongsToMany(Recipe::class, 'recipe_ingredients')
+            ->withPivot('quantity', 'unit');
     }
+
 
     /**
      * The attributes that should be cast to native types.

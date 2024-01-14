@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [RecipeController::class, 'index'])->name('recipes.index');
         Route::post('/', [RecipeController::class, 'store'])->name('recipes.store');
         Route::get('/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
-        Route::PATCH('/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
+        Route::put('/edit/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
         Route::delete('/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
         Route::post('/{recipe}/steps', [RecipeController::class, 'addStep']);
         Route::get('/{recipe}/steps', [RecipeController::class, 'listSteps']);
@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/recipes/{recipe}/ingredients', [IngredientController::class, 'addToRecipe']);
 
     });
-
+    Route::get('/recipes/user/{id}', [RecipeController::class, 'getRecipesByUser']);
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/logout', [AuthentificationController::class, 'logout'])->name('logout');
 });
@@ -49,7 +49,14 @@ Route::prefix('tags')->group(function () {
     Route::get('/type', [TagController::class, 'showTagType'])->name('tags.Types');
     Route::get('/type/{type}', [TagController::class, 'getTagsByType'])->name('tags.byType');
 });
+
+
 Route::get('/recipes/ingredients/search', [IngredientController::class, 'search']);
+Route::get('/ingredients', [IngredientController::class, 'index']);
+
+Route::get('/recipes/{recipe}/steps', [RecipeController::class, 'getStepsByRecipe']);
+Route::get('/recipes/{recipe}/ingredients', [RecipeController::class, 'getIngredientsByRecipe']);
+Route::get('/recipes/{recipe}/tags', [RecipeController::class, 'getTagsByRecipe']);
 
 Route::post('/login', [AuthentificationController::class, 'login'])->name('login');
 Route::post('/register', [AuthentificationController::class, 'register'])->name('register');

@@ -18,8 +18,9 @@ class TagType extends Model
         'type',
     ];
 
-    public function tags(){
-        return $this->hasMany(Tag::class);
+    public function tags()
+    {
+        return $this->hasMany(Tag::class); // Assurez-vous que la clé étrangère et la clé locale sont correctement définies si elles ne suivent pas les conventions de Laravel
     }
 
     /**

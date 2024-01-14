@@ -13,6 +13,11 @@ class Tag extends Model
         'name',
     ];
 
+    public function tagType()
+    {
+        return $this->belongsTo(TagType::class);
+    }
+
     public function recipe()
     {
         return $this->belongsToMany(Recipe::class, 'recipe_tags');

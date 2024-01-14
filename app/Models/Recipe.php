@@ -20,30 +20,31 @@ class Recipe extends Model
         'video',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function Ingredient()
+    public function ingredients()
     {
-        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
+        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
+            ->withPivot('quantity', 'unit');
     }
 
-    public function steps()
+    public function steps(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Step::class);
     }
 
 
-    public function comments()
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function tags()
+    public function tags(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'recipe_tags');
+        return $this->belongsToMany(Tag::class, 'recipe_tags', 'recipe_id', 'tag_id');
     }
 
     /**
